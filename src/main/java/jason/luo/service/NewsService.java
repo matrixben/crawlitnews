@@ -5,6 +5,7 @@ import jason.luo.domain.News;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * 存入数据库的操作方法
  */
+@Service
 public class NewsService {
     private static final Logger log = LoggerFactory.getLogger(NewsService.class);
 
@@ -41,4 +43,7 @@ public class NewsService {
         return (!l.isEmpty() && l.get(0) != null && l.get(0).getTitle().equals(title));
     }
 
+    public void printNews(String title, String tag, Date today, String fullUrlStr) {
+        System.out.println("title: "+title+"\ntag: "+tag+"\ndate: "+today+"\nurl: "+fullUrlStr);
+    }
 }

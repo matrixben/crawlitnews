@@ -3,7 +3,6 @@ package jason.luo.service.crawler;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
-import edu.uci.ics.crawler4j.url.WebURL;
 import jason.luo.service.NewsService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,18 +12,13 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * https://www.solidot.org
+ * www.huxiu.com
  */
-public class SolidotNews extends WebCrawler {
+public class HuxiuNews extends WebCrawler {
     private NewsService newsService;
 
-    SolidotNews(NewsService newsService){
+    HuxiuNews(NewsService newsService) {
         this.newsService = newsService;
-    }
-
-    public boolean shouldVisit(Page refPage, WebURL url) {
-        String urlStr = url.getURL().toLowerCase();
-        return true;
     }
 
     public void visit(Page page) {
@@ -36,11 +30,16 @@ public class SolidotNews extends WebCrawler {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             String html = htmlParseData.getHtml();
             Document doc = Jsoup.parse(html);
-            Elements articles = doc.getElementsByClass("block_m");
+
+            Elements articles = doc.getElementsByClass("mod-art");
             for (int i = articles.size()-1; i >= 0; i--) {
                 String title = articles.get(i).select("h2").text();
                 String subUrl = articles.get(i).select("h2 > a").attr("href");
-                String tag = articles.get(i).getElementsByClass("icon_float").get(0).child(0).attr("title");
+                Elements tags = articles.get(i).getElementsByClass("column-link-box");
+                String tag = "虎嗅";  //tag可能为空或有多个
+                if (!"".equals(tags.text().trim())){
+                    tag = tags.get(0).child(0).text();
+                }
                 String fullUrlStr = url + subUrl.substring(1);
 
                 Date today = new Date(new Date().getTime() + timeOffset);
@@ -48,7 +47,7 @@ public class SolidotNews extends WebCrawler {
 //                newsService.printNews(title, tag, today, fullUrlStr);
             }
 
+
         }
     }
-
 }
